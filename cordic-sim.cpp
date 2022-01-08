@@ -1,16 +1,25 @@
 #include <iostream>
 #include <cmath>
-#include "fixed/fixed.hpp"
+
+/// to use Fixed<m,n> use zero or comment it
+#define CORDIC_FLOAT false
+
 #include "cordic.hpp"
+
+#if CORDIC_FLOAT
+using InnerT = long double; // float / double / long double
+#else
+// optional: just use float/double/long double types
+#include "../fixedsim/fixed.hpp"
+
+using InnerT = Fixed<2, 6>; // Fixed<5,9> Fixed<2, 6> Fixed<2, 14> Fixed<2, 30> Fixed<2, 62> ...
+#endif
+
+using CordicT = Cordic<InnerT>;
 
 using namespace std;
 
-using InnerT = Fixed<2, 14>;
-//using InnerT = Fixed<2, 30>;
-//using InnerT = long double;
-using CordicT = Cordic<InnerT>;
-
-CordicT run(int steps, InnerT tet) {
+CordicT run(int steps, const InnerT &tet) {
     CordicT cordic{.n=0, .x=1, .y=0, .z=tet};
 
     cout << cordic << endl;

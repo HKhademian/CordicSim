@@ -28,7 +28,13 @@ public:
     INNER_T y = 0;
     INNER_T z = 0;
 
-    /** multiplier free cordic step implementation . */
+    /**
+     * multiplier free cordic step implementation
+     * iterate on cordic series
+     * @tparam typ 1: circular 0: linear -1: hyperbolic
+     * @tparam mod 0: rotation 1: vectoring
+     * @return next step of cordic
+     */
     template<int typ, int mod>
     static Cordic step(const Cordic &from) {
         const auto n = from.n;
@@ -36,9 +42,6 @@ public:
         const auto y = from.y;
         const auto z = from.z;
 
-        const auto d = (mod == MOD_ROTATION) ? (z >= 0 ? 1 : -1) :
-                       (mod == MOD_VECTORING) ? (z >= 0 ? -1 : +1) :
-                       (exit(1), 0);// unreachable
         const auto k = 0; // FIXME: not correct in hyperbolic mode, see textbook
         const auto sig = n - k;
         const auto p2sig = powl(2, -sig);
@@ -46,11 +49,20 @@ public:
                        typ == TYP_LINEAR ? p2sig :
                        typ == TYP_HYPERBOLIC ? atanh(p2sig) :
                        (exit(1), 0); // unreachable
+        const auto d = (mod == MOD_ROTATION) ? (z >= 0 ? 1 : -1) :
+                       (mod == MOD_VECTORING) ? (z >= 0 ? -1 : +1) :
+                       (exit(1), 0);// unreachable
         const auto m = typ;
 
-        INNER_T xdiff = y >> n; // FIXME: (INNER_T=double) cannot use shr(n) so use /powl(2,n)
-        INNER_T ydiff = x >> n; // FIXME: (INNER_T=double) cannot use shr(n) so use /powl(2,n)
         INNER_T zdiff = w;
+#if CORDIC_FLOAT
+        // FIXME: (INNER_T=double) cannot use shr(n) so use /powl(2,n)
+        INNER_T xdiff = y * p2sig;
+        INNER_T ydiff = x * p2sig;
+#else
+        INNER_T xdiff = y >> n;
+        INNER_T ydiff = x >> n;
+#endif
 
         if (m == 0) xdiff = 0;
         else if (m == -1) xdiff = -xdiff;
@@ -69,12 +81,6 @@ public:
         };
     }
 
-    /**
-     * iterate on cordic series
-     * @tparam typ 1: circular 0: linear -1: hyperbolic
-     * @tparam mod 0: rotation 1: vectoring
-     * @return next step of cordic
-     */
     template<int typ, int mod>
     Cordic step() { return step<typ, mod>(self); }
 
