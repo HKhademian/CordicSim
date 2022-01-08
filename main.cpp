@@ -6,6 +6,7 @@
 using namespace std;
 
 using CordicT = Cordic<Fixed<2, 30>>;
+//using CordicT = Cordic<Fixed<2, 30>>;
 //using CordicT = Cordic<long double>;
 
 int main() {
@@ -13,7 +14,7 @@ int main() {
     CordicT cordic{.n=0, .x=1, .y=0, .z=tet};
 
     cout << cordic << endl;
-    for (; cordic.n < 32 && abs((long double) cordic.z) > 0.001;) {
+    for (; cordic.n < 32 && abs((long double) cordic.z) > 0.0001;) {
         cordic = cordic.step<CordicT::TYP_CIRCULAR, CordicT::MOD_ROTATION>();
         cout << cordic << endl;
     }
