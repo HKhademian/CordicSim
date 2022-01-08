@@ -3,6 +3,15 @@
 #include <iostream>
 #include <cmath>
 
+/**
+ * this class holds a step of cordic machine.
+ * you can use it to simulate real implementation
+ * to determine (with INNER_T precision) how many steps
+ * (pipelined or resource shared) to reach required constraint
+ *
+ * @tparam INNER_T numeral type which handles all data precision ops.
+ * look fo Fixed<m,n> for more
+ */
 template<typename INNER_T>
 class Cordic {
 #define self (*this)
@@ -30,7 +39,7 @@ public:
         const auto d = (mod == MOD_ROTATION) ? (z >= 0 ? 1 : -1) :
                        (mod == MOD_VECTORING) ? (z >= 0 ? -1 : +1) :
                        (exit(1), 0);// unreachable
-        const auto k = 0; // FIXME: not correct in hyperbolic mode
+        const auto k = 0; // FIXME: not correct in hyperbolic mode, see textbook
         const auto sig = n - k;
         const auto p2sig = powl(2, -sig);
         const auto w = typ == TYP_CIRCULAR ? atan(p2sig) :
@@ -39,9 +48,9 @@ public:
                        (exit(1), 0); // unreachable
         const auto m = typ;
 
-        auto xdiff = y >> n; // FIXME : double cannot use shr(n) so use /powl(2,n)
-        auto ydiff = x >> n; // FIXME : double cannot use shr(n) so use /powl(2,n)
-        auto zdiff = w;
+        INNER_T xdiff = y >> n; // FIXME: (INNER_T=double) cannot use shr(n) so use /powl(2,n)
+        INNER_T ydiff = x >> n; // FIXME: (INNER_T=double) cannot use shr(n) so use /powl(2,n)
+        INNER_T zdiff = w;
 
         if (m == 0) xdiff = 0;
         else if (m == -1) xdiff = -xdiff;
@@ -67,19 +76,7 @@ public:
      * @return next step of cordic
      */
     template<int typ, int mod>
-    Cordic step() {
-        return step<typ, mod>(self);
-        /* original multiplier free algorithm : circular rotation
-        const auto p2n = pow((long double) 2, -n);
-        const INNER_I arc = atan(p2n);
-        return {
-                .n = n + 1,
-                .x = z >= 0 ? (x - (y >>n)) : (x + (y >>n)),
-                .y = z >= 0 ? (y + (x >>n)) : (y - (x >>n)),
-                .z = z >= 0 ? (y - arc) : (y + arc),
-        };
-        */
-    }
+    Cordic step() { return step<typ, mod>(self); }
 
     Cordic &operator=(const Cordic &c) {
         n = c.n;
