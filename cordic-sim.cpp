@@ -36,6 +36,7 @@ void print(const CordicT &cordic, const InnerT &tet) {
     const auto realS = sin((long double) tet);
     const auto cordicC = ((long double) cordic.x);
     const auto cordicS = ((long double) cordic.y);
+    cout << endl;
     cout << "tet: " << ((long double) tet) << " deg: " << ((long double) tet) * 180 / M_PI << endl;
     // cout << "real   cos: " << realC << endl;
     // cout << "cordic cos: " << cordicC << endl;
@@ -43,7 +44,6 @@ void print(const CordicT &cordic, const InnerT &tet) {
     // cout << "real   sin: " << realS << endl;
     // cout << "cordic sin: " << cordicS << endl;
     cout << "acc sin: " << 100 - abs(realS - cordicS) * 100 << endl;
-    cout << endl;
 }
 
 void test(int step, bool log, const InnerT &tet) {
@@ -52,6 +52,7 @@ void test(int step, bool log, const InnerT &tet) {
 }
 
 int main() {
+    cout << "InnerT: " << (InnerT) 0 << endl;
     /* to find how many steps is needed to reach
      * required precision */
 //    test(0, true, M_PI / 6), exit(0);
