@@ -16,7 +16,8 @@ template<typename INNER_T>
 class Cordic {
 #define self (*this)
 public:
-    constexpr static const long double K = 1.6467603;
+    constexpr static const long double K = 1.646760258121;
+    constexpr static const long double Kinv = 0.607252935;
     static const int TYP_CIRCULAR = 1;
     static const int TYP_LINEAR = 0;
     static const int TYP_HYPERBOLIC = -1;
