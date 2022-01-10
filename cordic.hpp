@@ -37,8 +37,7 @@ public:
      * @tparam mod 0: rotation 1: vectoring
      * @return next step of cordic
      */
-    template<int typ, int mod>
-    static Cordic step(const Cordic &from) {
+    static Cordic step(const Cordic &from, const int typ, const int mod) {
         const auto n = from.n;
         const auto x = from.x;
         const auto y = from.y;
@@ -83,14 +82,12 @@ public:
         };
     }
 
-    template<int typ, int mod>
-    Cordic step() { return step<typ, mod>(self); }
-
     Cordic &operator=(const Cordic &c) {
         n = c.n;
         x = c.x;
         y = c.y;
         z = c.z;
+        return *this;
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Cordic &cordic) {
